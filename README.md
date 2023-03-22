@@ -1,6 +1,6 @@
 # bacon
 
-A simple ibeacon beacons scanning app
+A simple ibeacon beacons scanning app. All the ui and main functions is at lib\main.dart
 
 ## Getting Started
 

@@ -210,7 +210,7 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
                         launchUrl(Uri.parse(
                             'https://cdn-icons-png.flaticon.com/512/590/590796.png'));
                       },
-                      child: const Text("Show More",
+                      child: const Text("Read More",
                           style: TextStyle(fontSize: 20)),
                     ),
                   ),

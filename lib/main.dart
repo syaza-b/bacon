@@ -8,6 +8,7 @@ import 'package:beacons_plugin/beacons_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -206,13 +207,8 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.amber),
                       onPressed: () async {
-                        // show next page
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ReadMore(),
-                          ),
-                        );
+                        launchUrl(Uri.parse(
+                            'https://cdn-icons-png.flaticon.com/512/590/590796.png'));
                       },
                       child: const Text("Show More",
                           style: TextStyle(fontSize: 20)),
@@ -242,29 +238,5 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
           rng.nextInt(100000), _tag, subtitle, platformChannelSpecifics,
           payload: 'item x');
     });
-  }
-}
-
-//second page
-class ReadMore extends StatelessWidget {
-  const ReadMore({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('More About beacon'),
-        backgroundColor: Colors.amber,
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // Navigate back to first route when tapped
-            Navigator.pop(context);
-          },
-          child: const Text('Home'),
-        ),
-      ),
-    );
   }
 }

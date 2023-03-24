@@ -8,10 +8,15 @@ import 'package:beacons_plugin/beacons_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
+import 'login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const Bacon());
+  runApp(const MaterialApp(
+    home: SignInPage(),
+    title: 'My App',
+    // Add other app properties here as needed
+  ));
 }
 
 class Bacon extends StatefulWidget {

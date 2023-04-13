@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "128338547880",
+    "project_id": "bacon-70636",
+    "storage_bucket": "bacon-70636.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:128338547880:android:d758dd2d2eb92533b95e9d",
+        "android_client_info": {
+          "package_name": "com.example.bacon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "128338547880-8fbomedib8ei9r1b8b0l1ospj5dnuo2i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmmZ8LOIYkeA6wyu6YrJj4m5FZPhRvEH0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "128338547880-8fbomedib8ei9r1b8b0l1ospj5dnuo2i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

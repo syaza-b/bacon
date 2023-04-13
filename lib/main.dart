@@ -3,15 +3,19 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:beacons_plugin/beacons_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
 import 'login.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MaterialApp(
     home: SignInPage(),
     title: 'My App',
@@ -42,11 +46,13 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
   final StreamController<String> beaconEventsController =
       StreamController<String>.broadcast();
   bool isNear = false, showButton = false;
+  String? name, emailAddress, photoUrl;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    userLogin();
     initPlatformState();
 
     // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
@@ -65,6 +71,18 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
     beaconEventsController.close();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void userLogin() {
+    var user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      for (final providerProfile in user.providerData) {
+        // Name, email address, and profile photo URL
+        name = providerProfile.displayName;
+        emailAddress = providerProfile.email;
+        photoUrl = providerProfile.photoURL;
+      }
+    }
   }
 
   Future<void> initPlatformState() async {
@@ -91,7 +109,12 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
         } else if (call.method == 'isPermissionDialogShown') {
           _showNotification(
               "Prominent disclosure message is shown to the user!");
-        }
+        } /*WIP condition not logic
+        else if (call.method == 'didEnterRegion') {
+          _isBeaconInRange = true;
+        } else if (call.method == 'didExitRegion') {
+          _isBeaconInRange = false;
+        }*/
       });
     } else if (Platform.isIOS) {
       _showNotification("Beacons monitoring started..");
@@ -119,7 +142,7 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
 
     beaconEventsController.stream.listen(
         (data) {
-          if (data.isNotEmpty && isRunning) {
+          if (data.isNotEmpty && isRunning == true) {
             showButton = true;
             Map<String, dynamic> beaconData = json.decode(data);
             setState(() {
@@ -127,24 +150,29 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
             });
 
             isNear = data.contains('Near');
-            if (_isBeaconInRange && !isNear) {
+            /*WIP conditions are not logic
+            if (_isBeaconInRange == true && isNear == true) {
+              // User has entered the beacon region
+              _showNotification('Entering beacon area');
+              showButton = true;
+            } else if (_isBeaconInRange == false && isNear == false) {
               // User has exited the beacon region
               _showNotification('Exiting beacon area');
               showButton = false;
-              //_isBeaconInRange = false;
-            } else if (!_isBeaconInRange && isNear) {
-              // User has entered the beacon region
-              _showNotification('Entering beacon area');
-              _isBeaconInRange = true;
-              showButton = true;
             }
+            */
+
             if (kDebugMode) {
               print('Beacons Data Received:  $data');
             }
-          } else if (data.isEmpty && isRunning) {
+          } else if (data.trim().isEmpty || !isRunning) {
             if (kDebugMode) {
-              print('Beacons Data Got:  $data');
+              print('No beacon is found');
             }
+
+            //_isBeaconInRange = false;
+            showButton = false;
+            isNear = false;
           }
         },
         onDone: () {},
@@ -166,11 +194,42 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
           appBar: AppBar(
             title: const Text('Bacon Beacons'),
             backgroundColor: Colors.amber,
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(photoUrl ?? ''),
+                backgroundColor: Colors.amber,
+                radius: 50,
+              ),
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {
+                  _signOut();
+                  if (kDebugMode) {
+                    print(FirebaseAuth.instance.authStateChanges());
+                  }
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInPage()));
+                },
+              ),
+            ],
           ),
           body: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Hi $name',
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                  ),
+                ),
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -250,7 +309,15 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
   }
 }
 
-//second page
+Future<void> _signOut() async {
+  var proid = FirebaseAuth.instance.currentUser!.providerData[0].providerId;
+  if (proid == 'google.com') {
+    await GoogleSignIn().signOut();
+  }
+  await FirebaseAuth.instance.signOut();
+}
+
+//temporary second page
 class ReadMore extends StatelessWidget {
   const ReadMore({super.key});
 

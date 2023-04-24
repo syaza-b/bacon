@@ -26,7 +26,7 @@ class SignInPage extends StatelessWidget {
                 });
               },
             ),
-            /* const Divider(),
+            const Divider(),
             SignInButton(
               Buttons.FacebookNew,
               onPressed: () {
@@ -37,7 +37,7 @@ class SignInPage extends StatelessWidget {
                   }
                 });
               },
-            ),*/
+            ),
           ]),
     );
   }

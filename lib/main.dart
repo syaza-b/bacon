@@ -21,6 +21,7 @@ Future<void> main() async {
     title: 'My App',
     // Add other app properties here as needed
   ));
+  //runApp(const Bacon());
 }
 
 class Bacon extends StatefulWidget {

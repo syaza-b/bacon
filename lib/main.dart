@@ -9,19 +9,14 @@ import 'package:beacons_plugin/beacons_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
-import 'login.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   runApp(const MaterialApp(
     home: SignInPage(),
     title: 'My App',
     // Add other app properties here as needed
   ));
-  //runApp(const Bacon());
 }
 
 class Bacon extends StatefulWidget {

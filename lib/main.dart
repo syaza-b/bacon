@@ -272,10 +272,15 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.amber),
                       onPressed: () async {
-                        launchUrl(Uri.parse(
-                            'https://cdn-icons-png.flaticon.com/512/590/590796.png'));
+                        // show next page
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ReadMore(),
+                          ),
+                        );
                       },
-                      child: const Text("Read More",
+                      child: const Text("Show More",
                           style: TextStyle(fontSize: 20)),
                     ),
                   ),
@@ -306,7 +311,15 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
   }
 }
 
-//second page
+Future<void> _signOut() async {
+  var proid = FirebaseAuth.instance.currentUser!.providerData[0].providerId;
+  if (proid == 'google.com') {
+    await GoogleSignIn().signOut();
+  }
+  await FirebaseAuth.instance.signOut();
+}
+
+//temporary second page
 class ReadMore extends StatelessWidget {
   const ReadMore({super.key});
 

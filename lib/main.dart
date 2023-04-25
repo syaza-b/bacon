@@ -145,7 +145,11 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
             Map<String, dynamic> beaconData = json.decode(data);
             setState(() {
               beaconDistance = double.parse(beaconData['distance']);
-              _isBeaconInRange = true;
+              if (beaconDistance <= 4) {
+                _isBeaconInRange = true;
+              } else {
+                _isBeaconInRange = false;
+              }
             });
 
             isNear = data.contains('Near');

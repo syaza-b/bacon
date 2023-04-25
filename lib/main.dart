@@ -112,12 +112,7 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
         } else if (call.method == 'isPermissionDialogShown') {
           _showNotification(
               "Prominent disclosure message is shown to the user!");
-        } /*WIP condition not logic
-        else if (call.method == 'didEnterRegion') {
-          _isBeaconInRange = true;
-        } else if (call.method == 'didExitRegion') {
-          _isBeaconInRange = false;
-        }*/
+        }
       });
     } else if (Platform.isIOS) {
       _showNotification("Beacons monitoring started..");
@@ -150,10 +145,11 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
             Map<String, dynamic> beaconData = json.decode(data);
             setState(() {
               beaconDistance = double.parse(beaconData['distance']);
+              _isBeaconInRange = true;
             });
 
             isNear = data.contains('Near');
-            /*WIP conditions are not logic
+
             if (_isBeaconInRange == true && isNear == true) {
               // User has entered the beacon region
               _showNotification('Entering beacon area');
@@ -163,7 +159,6 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
               _showNotification('Exiting beacon area');
               showButton = false;
             }
-            */
 
             if (kDebugMode) {
               print('Beacons Data Received:  $data');
@@ -173,7 +168,7 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
               print('No beacon is found');
             }
 
-            //_isBeaconInRange = false;
+            _isBeaconInRange = false;
             showButton = false;
             isNear = false;
           }

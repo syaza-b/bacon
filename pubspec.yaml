@@ -39,9 +39,13 @@ dependencies:
   intl: ^0.18.0
   flutter_local_notifications: ^13.0.0
   geolocator: ^9.0.2
+<<<<<<< HEAD
   flutter_signin_button: ^2.0.0
   firebase_auth: ^4.2.2
   google_sign_in: ^6.1.0
+=======
+  url_launcher: ^6.1.10
+>>>>>>> c7e7c63a9a0af1df2cf96d40a79a3c80c9b4a2b0
 
 dev_dependencies:
   flutter_test:

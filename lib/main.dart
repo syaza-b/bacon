@@ -43,12 +43,15 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
 
   String _tag = "Beacons Plugin";
   var isRunning = false;
-  bool _isBeaconInRange = false;
+
   String beaconName = '';
   double beaconDistance = 0;
   final StreamController<String> beaconEventsController =
       StreamController<String>.broadcast();
-  bool isNear = false, showButton = false;
+  bool isNear = false,
+      showButton = false,
+      _isInForeground = true,
+      _isBeaconInRange = false;
   String? name, emailAddress, photoUrl;
 
   @override
@@ -67,6 +70,12 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse: null);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    _isInForeground = state == AppLifecycleState.resumed;
   }
 
   @override
@@ -94,7 +103,7 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
       await BeaconsPlugin.setDisclosureDialogMessage(
           title: "Background Locations",
           message:
-              "Bacon app collects location data to enable Beacon Scanning Feature even when the app is closed or not in use");
+              "Click 'While using the app' for beacon scanning features to work");
 
       //Only in case, you want the dialog to be shown again. By Default, dialog will never be shown if permissions are granted.
       //await BeaconsPlugin.clearDisclosureDialogShowFlag(false);
@@ -145,22 +154,17 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
             Map<String, dynamic> beaconData = json.decode(data);
             setState(() {
               beaconDistance = double.parse(beaconData['distance']);
-              if (beaconDistance <= 4) {
-                _isBeaconInRange = true;
-              } else {
-                _isBeaconInRange = false;
-              }
+              _isBeaconInRange = true;
             });
 
             isNear = data.contains('Near');
 
-            if (_isBeaconInRange == true && isNear == true) {
+            if (isNear == true) {
               // User has entered the beacon region
-              _showNotification('Entering beacon area');
               showButton = true;
-            } else if (_isBeaconInRange == false && isNear == false) {
+            } else {
               // User has exited the beacon region
-              _showNotification('Exiting beacon area');
+
               showButton = false;
             }
 
@@ -172,7 +176,6 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
               print('No beacon is found');
             }
 
-            _isBeaconInRange = false;
             showButton = false;
             isNear = false;
           }

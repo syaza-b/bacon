@@ -44,14 +44,15 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
   String _tag = "Beacons Plugin";
   var isRunning = false;
 
-  String beaconName = '';
+  String beaconName = '', _newProxi = '', _prevProxi = '';
   double beaconDistance = 0;
   final StreamController<String> beaconEventsController =
       StreamController<String>.broadcast();
   bool isNear = false,
       showButton = false,
       _isInForeground = true,
-      _isBeaconInRange = false;
+      _isBeaconInRange = false,
+      _proxiChange = false;
   String? name, emailAddress, photoUrl;
 
   @override
@@ -154,18 +155,32 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
             Map<String, dynamic> beaconData = json.decode(data);
             setState(() {
               beaconDistance = double.parse(beaconData['distance']);
+              _newProxi = beaconData['proximity'];
               _isBeaconInRange = true;
             });
 
             isNear = data.contains('Near');
-
+            //see changes in stream
+            if (_newProxi != _prevProxi) {
+              _proxiChange = true;
+            } else {
+              _proxiChange = false;
+            }
+            //set new as prev data
+            _prevProxi = _newProxi;
             if (isNear == true) {
               // User has entered the beacon region
+              if (_proxiChange == true) {
+                _showNotification('Entering region $beaconName');
+              }
               showButton = true;
             } else {
               // User has exited the beacon region
-
+              if (_proxiChange == true) {
+                _showNotification('Exiting region $beaconName');
+              }
               showButton = false;
+              _isBeaconInRange = false;
             }
 
             if (kDebugMode) {
@@ -178,6 +193,7 @@ class _BaconState extends State<Bacon> with WidgetsBindingObserver {
 
             showButton = false;
             isNear = false;
+            _isBeaconInRange = false;
           }
         },
         onDone: () {},

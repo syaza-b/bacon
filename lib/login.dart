@@ -27,17 +27,9 @@ class SignInPage extends StatelessWidget {
               },
             ),
             const Divider(),
-            SignInButton(
-              Buttons.FacebookNew,
-              onPressed: () {
-                FirebaseAuth.instance.userChanges().listen((User? user) {
-                  if (user != null) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const Bacon()));
-                  }
-                });
-              },
-            ),
+            SignInButton(Buttons.FacebookNew, onPressed: () {
+              signInWithFacebook();
+            }),
           ]),
     );
   }
@@ -59,4 +51,10 @@ Future<UserCredential> signInWithGoogle() async {
 
   // Once signed in, return the UserCredential
   return await FirebaseAuth.instance.signInWithCredential(credential);
+}
+
+signInWithFacebook() {
+  const Dialog(
+    child: Text('Not yet.'),
+  );
 }

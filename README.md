@@ -1,9 +1,7 @@
 # bacon
 
-A simple ibeacon beacons scanning app. All the ui and main functions is at lib\main.dart
+A simple ibeacon beacons scanning app. All the ui and main functions is at lib\main.dart. Only a prototype
 
 ## Getting Started
 
-This flutter project uses beacons plugin, it takes both ios and android and simplify it. 
-<--wip-->
 

@@ -1,0 +1,107 @@
+ /*this part is what im struggling at
+ I want to show this kind of data from firebase realtime database
+ 
+ event{
+ id1{name,desc}
+ id2{name,desc}
+ }
+ 
+ 
+intially i want to show it as a table but I used up all widgets in firebase_ui_database package always shows this specific crash
+"Another exception was thrown: RenderBox was not laid out: RenderTransform#eaeea relayoutBoundary=up3 NEEDS-PAINT NEEDS-COMPOSITING-BITS-UPDATE
+Another exception was thrown: RenderBox was not laid out: RenderClipRect#34e5c relayoutBoundary=up2 NEEDS-PAINT NEEDS-COMPOSITING-BITS-UPDATE"
+And yes the FirebaseAnimatedList also returns this error
+
+
+The only widget that works so far is the example down here, however i cannot iterate all data in all child node,
+because this widget only returns 1 widget,
+putting return inside for bracket causes "The body might complete normally, causing 'null' to be returned, but the return type, 'Widget', is a potentially non-nullable type.
+Try adding either a return or a throw statement at the end."
+
+Big array prototype also error?
+
+//to conclude, flutter IS BAD at handling a bulk of child node (even tho its flat nest), 
+The dummy array was flatly refused to be shown ,
+unsure if the new flutter update caused this
+FOR FUTURE:
+-Learn best practice to avoid each widget cancelling out other widget logic
+-Use FIRESTORE not FIREBASE REALTIME DATABASE 
+-Utilize type for noti
+-Utilize date for status hide
+-Utilize status hide for display hide
+
+
+                FirebaseDatabaseQueryBuilder(
+                  query: eventquery,
+                  builder: (context, snapshot, _) {
+                    if (snapshot.hasData) {
+                      Map<int, DataSnapshot> list = snapshot.docs.asMap();
+                      for (var child in list.values) {
+                        eventid = child.key.toString();
+                        eventname = child.child('name').value.toString();
+                      }
+                      return Text('$eventid, $eventname');
+                    } else {
+                      print('Error ${snapshot.error}');
+                      return Text('Error ${snapshot.error}');
+                    }
+                  },
+                ),
+
+
+List<Event> events = [
+    Event(
+      id: '101',
+      date: '27/1/23-29/1/23',
+      desc:
+          'Karnival Kokurikulum, Universiti Malaysia Sabah sekali lagi menjadi medan kemenjadian mahasiswa dalam usaha membentuk mahasiswa holistik melalui Matapelajaran Umum Kursus Kokurikulum Berkredit.',
+      name: 'Karnival Kokurikulum UMSKAL 2023',
+      pic:
+          'https://2.bp.blogspot.com/-em_k1fXRKAc/WAmk6wXnbNI/AAAAAAAAAT0/X_ORFKXhoxMjZI4AvFd2VLAyzBxbBZiOwCK4B/s320/event_poster.jpg',
+      place: 'Dewan Utama',
+      status: 'ongoing',
+      time: '8AM-12PM',
+      type: 'education',
+    ),
+    Event(
+      id: '102',
+      date: '02/12/23-02/12/23',
+      desc:
+          ' 📢 Sektor Sukan dan Rekreasi UMSKAL akan mengadakan Graduate Beach Run Sempena Konvokesyen UMS yang akan berlangsung seperti ketetapan berikut 📢 :Terma dan syarat sila rujuk forms yang telah disediakan mengikut sukan yang dianjurkan.',
+      name: 'Grad Fun Run',
+      pic: 'https://web.whatsapp.com/75f55a6d-102f-4fb7-a31b-fd60f5234822',
+      place: 'Podiun',
+      status: 'upcoming',
+      time: '7AM-12PM',
+      type: 'sport',
+    ),
+    Event(
+      id: '103',
+      date: '22/1/23-25/1/23',
+      desc:
+          'During Chinese New Year at the university, expect vibrant red decorations, cultural workshops, a Lunar New Year fair with traditional food, performances like lion dances, informative lectures, a gala featuring music and dance, zodiac predictions, red envelope exchanges, and exhibits that together celebrate and educate about Chinese culture.',
+      name: 'Chinese New Year',
+      pic: 'https://hums.ums.edu.my/images/News/happy-cny.png',
+      place: 'Dewan Theaterrate',
+      status: 'passed',
+      time: '*AM-12PM',
+      type: 'social',
+    ),
+  ];
+
+class Event {
+  final String id, date, desc, name, pic, place, status, time, type;
+
+  Event({
+    required this.id,
+    required this.date,
+    required this.desc,
+    required this.name,
+    required this.pic,
+    required this.place,
+    required this.status,
+    required this.time,
+    required this.type,
+  });
+}
+*/

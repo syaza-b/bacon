@@ -1,7 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'emaillogin.dart';
+import 'package:firebase_ui_database/firebase_ui_database.dart';
 
 class Admin extends StatefulWidget {
   const Admin({super.key});
@@ -11,100 +13,170 @@ class Admin extends StatefulWidget {
 }
 
 class _AdminState extends State<Admin> {
-  String eventname = "",
-      eventdesc = "",
-      eventpic = "",
-      eventdate = "",
-      eventtime = "",
-      eventstatus = "",
-      eventtype = "",
-      eventid = "",
-      place = "";
   final DatabaseReference database =
       FirebaseDatabase.instance.ref().child('/event');
-  Query dbRef = FirebaseDatabase.instance.ref().child('/event');
-  showEvent() {
-    database.onValue.listen(
-      (event) async {
-        for (final child in event.snapshot.children) {
-          eventid = child.key.toString();
-          print(eventid);
-          DataCell(Text(eventid));
-          for (var child2 in child.children) {
-            if (child2.key.toString() == 'name') {
-              eventname = child2.value.toString();
-              print(eventname);
-            }
-            if (child2.key.toString() == 'pic') {
-              eventpic = child2.value.toString();
-            }
-            if (child2.key.toString() == 'date') {
-              eventdate = child2.value.toString();
-            }
-            if (child2.key.toString() == 'time') {
-              eventtime = child2.value.toString();
-            }
-            if (child2.key.toString() == 'status') {
-              eventstatus = child2.value.toString();
-            }
-            if (child2.key.toString() == 'type') {
-              eventtype = child2.value.toString();
-            }
-            if (child2.key.toString() == 'place') {
-              place = child2.value.toString();
-              final DatabaseReference placecheck =
-                  FirebaseDatabase.instance.ref().child('/beacon/$place');
-              DatabaseEvent placewhere =
-                  await placecheck.child('/beaconname').once();
-              place = placewhere.snapshot.value.toString();
-              print(place);
-            }
-          }
-        }
+  final eventquery =
+      FirebaseDatabase.instance.ref().child('/event').orderByKey();
+  String id = '',
+      name = '',
+      desc = '',
+      place = '',
+      time = '',
+      date = '',
+      type = '',
+      status = '',
+      pic = '';
+  TextEditingController namec = TextEditingController();
+  TextEditingController datec = TextEditingController();
+  TextEditingController timec = TextEditingController();
+  TextEditingController typec = TextEditingController();
+  TextEditingController statusc = TextEditingController();
+  TextEditingController idc = TextEditingController();
+
+  showMore() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Column(
+            children: [
+              Text(
+                'Add new event or Edit Event',
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                'To edit event, type same Event ID',
+                style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    color: Colors.grey,
+                    fontSize: 15),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: idc,
+                  decoration: const InputDecoration(
+                    labelText: "Event ID",
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(255, 0, 0,
+                              0)), // Underline color when not focused
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: namec,
+                  decoration: const InputDecoration(
+                    labelText: "Name",
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(255, 0, 0,
+                              0)), // Underline color when not focused
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: datec,
+                  decoration: const InputDecoration(
+                    labelText: "Date",
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(255, 0, 0,
+                              0)), // Underline color when not focused
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: timec,
+                  decoration: const InputDecoration(
+                    labelText: "Time",
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(255, 0, 0,
+                              0)), // Underline color when not focused
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: typec,
+                  decoration: const InputDecoration(
+                    labelText: "Type",
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(255, 0, 0,
+                              0)), // Underline color when not focused
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: statusc,
+                  decoration: const InputDecoration(
+                    labelText: "Status",
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(255, 0, 0,
+                              0)), // Underline color when not focused
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      update(idc, namec, datec, timec, statusc, typec);
+                    },
+                    child: Icon(Icons.add))
+              ],
+            ),
+          ),
+        );
       },
     );
   }
 
-  Widget listItem() {
-    return Container(
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(10),
-      height: 200,
-      color: Colors.lightBlueAccent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(
-            '/asset/img/default_avatar.jpeg',
-            height: 50,
-          ),
-          const Text('ID',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300)),
-          const Text('Name',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300)),
-          const Text('Type',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300)),
-          const Text('Description',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300)),
-          const Text('Date',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300)),
-          const Text('Time',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300)),
-          const Text('Place',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300)),
-          Row(
-            children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.visibility_off)),
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.delete_forever)),
-            ],
-          )
-        ],
-      ),
-    );
+  update(idc, namec, datec, timec, statusc, typec) async {
+    // Call the set() method to add the new data to the database.
+    final String id = idc.text;
+    final String name = namec.text;
+    final String date = datec.text;
+    final String time = timec.text;
+    final String status = statusc.text;
+    final String type = typec.text;
+
+    final Map<String, dynamic> newEventData = {
+      'name': name,
+      'date': date,
+      'time': time,
+      'status': status,
+      'type': type,
+    };
+
+    database.child(id).set(newEventData);
   }
 
   @override
@@ -112,52 +184,56 @@ class _AdminState extends State<Admin> {
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 91, 164, 198),
+          seedColor: const Color.fromARGB(255, 43, 128, 168),
         ),
         useMaterial3: true,
       ),
       home: Builder(
         builder: (context) {
           return Scaffold(
-              appBar: AppBar(
-                title: const Text(
-                  'UMSKAL Beacons [Admin]',
-                  style: TextStyle(fontSize: 20),
-                ),
-                backgroundColor: const Color.fromARGB(255, 152, 186, 202),
-                leading: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.admin_panel_settings)),
-                actions: [
-                  //logout
-                  IconButton(
-                    icon: const Icon(Icons.logout),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const EmailLogin()));
-                    },
-                  ),
-                ],
+            appBar: AppBar(
+              title: const Text(
+                'UMSKAL Beacons [Admin]',
+                style: TextStyle(fontSize: 18),
               ),
-              body: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    child: Title(
-                      color: const Color.fromARGB(255, 30, 57, 105),
-                      child: const Text(
-                        "Events",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    ),
-                  ),
-                  listItem(),
-                ],
-              ));
+              backgroundColor: const Color.fromARGB(255, 43, 128, 168),
+              leading: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.admin_panel_settings)),
+              actions: [
+                //logout
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const EmailLogin()));
+                  },
+                ),
+              ],
+            ),
+            body: SingleChildScrollView(
+              child: FirebaseDatabaseDataTable(
+                query: database,
+                columnLabels: {
+                  'name': Text('Name'),
+                  'date': Text('Date'),
+                  'time': Text('Time'),
+                  'type': Text('Type'),
+                  'status': Text('Status'),
+                },
+                rowsPerPage: 6,
+                showCheckboxColumn: false,
+              ),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                showMore();
+              },
+              child: const Icon(Icons.add),
+            ),
+          );
         },
       ),
     );
